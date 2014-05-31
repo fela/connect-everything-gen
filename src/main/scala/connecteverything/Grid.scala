@@ -79,9 +79,11 @@ class Grid(val width: Int, val height: Int,val wrapping: Boolean) { grid =>
       def validConnection(dir: Direction): Boolean = neighbor(dir) match {
         case None =>
           !directions.contains(dir)
-        case Some(cell) =>
-          !cell.marked ||
-            cell.directions.contains(dir.opposite) == directions.contains(dir)
+        case Some(cell) => {
+          !(directions.toSet == Set(dir) && cell.directions.toSet.size == 1 ) &&
+          (!cell.marked ||
+            cell.directions.contains(dir.opposite) == directions.contains(dir))
+        }
       }
 
       val res: Boolean = Direction.allDirections.forall { dir =>
