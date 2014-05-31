@@ -44,8 +44,22 @@ case class Directions(up: Boolean, right: Boolean, down: Boolean, left: Boolean)
     toSet.contains(d)
 
   def toSet: Set[Direction] =
-    Set((up, Up), (right, Up), (down, Down), (left, Left)).filter(_._1).map(_._2)
+    Set((up, Up), (right, Right), (down, Down), (left, Left)).filter(_._1).map(_._2)
 
   def movedDirections(move: Int): Directions =
     Directions.fromSet(toSet.map(_.movedDirection(move)))
+
+
+  def distinctMoves = {
+    var alreadyFoundConfigurations = Set[Directions]()
+    var res = List[Int]()
+    (0 until 4).foreach { i =>
+       val moved: Directions = movedDirections(i)
+       if (!alreadyFoundConfigurations.contains(moved)) {
+         alreadyFoundConfigurations += moved
+         res = i :: res
+       }
+    }
+    res.reverse
+  }
 }

@@ -61,8 +61,10 @@ class Grid(val width: Int, val height: Int,val wrapping: Boolean) { grid =>
     def isEmpty = directions == Directions(false, false, false, false)
 
     override def toString = directions.toString
-    def possibleMoves: Seq[Int] =
-      (0 until 4).filter(canMove)
+
+    def possibleMoves: Seq[Int] = {
+      directions.distinctMoves.filter(canMove)
+    }
 
     def canMove(move: Int): Boolean = {
       val originalDirections = directions
@@ -72,7 +74,8 @@ class Grid(val width: Int, val height: Int,val wrapping: Boolean) { grid =>
         case None =>
           !directions.contains(dir)
         case Some(cell) =>
-          cell.directions.contains(dir.opposite) == directions.contains(dir)
+          !cell.marked ||
+            cell.directions.contains(dir.opposite) == directions.contains(dir)
       }
 
       val res: Boolean = Direction.allDirections.forall { dir =>
