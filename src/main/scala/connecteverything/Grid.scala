@@ -64,7 +64,24 @@ class Grid(val width: Int, val height: Int,val wrapping: Boolean) { grid =>
     def possibleMoves: Seq[Int] =
       (0 until 4).filter(canMove)
 
-    def canMove(move: Int): Boolean = ???
+    def canMove(move: Int): Boolean = {
+      val originalDirections = directions
+      directions = directions.movedDirections(move)
+
+      def validConnection(dir: Direction): Boolean = neighbor(dir) match {
+        case None =>
+          !directions.contains(dir)
+        case Some(cell) =>
+          cell.directions.contains(dir.opposite) == directions.contains(dir)
+      }
+
+      val res: Boolean = Direction.allDirections.forall { dir =>
+        validConnection(dir)
+      }
+      directions = originalDirections
+      return res
+    }
+
   }
 
   def cellAt(row: Int, col: Int) : Option[Cell] = {
@@ -119,15 +136,23 @@ class Grid(val width: Int, val height: Int,val wrapping: Boolean) { grid =>
          .filter(hasEmptyNeighbor)
   }
 
-  /*def numberOfSolutions {
-      val possibleMoves: Array[(Cell, Int)] =
-        cells.flatMap(cell => cell.possibleMoves.map((cell, _)))
-  } */
+  def numberOfSolutions {
+      /*val possibleMoves: Array[(Cell, Int)] =
+        cells.flatMap(cell => cell.possibleMoves.map((cell, _)))*/
+    //markCells
+
+  }
+
+  def hasEasySolution = {
+    markCells
+    println(cells.count(_.marked))
+    cells.forall(_.marked)
+  }
 
   def markCells {
       var newlyMarked = false
       cells.foreach { cell =>
-        if (cell.possibleMoves.length == 1) {
+        if (!cell.marked && cell.possibleMoves.length == 1) {
           cell.marked = true
           newlyMarked = true
         }

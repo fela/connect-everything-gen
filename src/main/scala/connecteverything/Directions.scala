@@ -19,6 +19,14 @@ object Directions {
     Directions(true,  true,  false, true ) -> "┴",
     Directions(true,  true,  true,  true ) -> "┼"
   )
+
+  def fromSet(set: Set[Direction]): Directions = {
+    Directions(
+      set.contains(Up),
+      set.contains(Right),
+      set.contains(Down),
+      set.contains(Left))
+  }
 }
 
 case class Directions(up: Boolean, right: Boolean, down: Boolean, left: Boolean) {
@@ -31,4 +39,13 @@ case class Directions(up: Boolean, right: Boolean, down: Boolean, left: Boolean)
     case Down => Directions(up, right, true, left)
     case Left => Directions(up, right, down, true)
   }
+
+  def contains(d: Direction) =
+    toSet.contains(d)
+
+  def toSet: Set[Direction] =
+    Set((up, Up), (right, Up), (down, Down), (left, Left)).filter(_._1).map(_._2)
+
+  def movedDirections(move: Int): Directions =
+    Directions.fromSet(toSet.map(_.movedDirection(move)))
 }
