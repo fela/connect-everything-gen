@@ -60,7 +60,13 @@ class Grid(val width: Int, val height: Int,val wrapping: Boolean) { grid =>
 
     def isEmpty = directions == Directions(false, false, false, false)
 
-    override def toString = directions.toString
+    override def toString = {
+      val sym = directions.toString
+      if (marked)
+        Console.RED_B + sym + Console.RESET
+      else
+        sym
+    }
 
     def possibleMoves: Seq[Int] = {
       directions.distinctMoves.filter(canMove)
@@ -139,20 +145,13 @@ class Grid(val width: Int, val height: Int,val wrapping: Boolean) { grid =>
          .filter(hasEmptyNeighbor)
   }
 
-  def numberOfSolutions {
-      /*val possibleMoves: Array[(Cell, Int)] =
-        cells.flatMap(cell => cell.possibleMoves.map((cell, _)))*/
-    //markCells
-
-  }
-
   def hasEasySolution = {
     markCells
     println(cells.count(_.marked))
     cells.forall(_.marked)
   }
 
-  def markCells {
+  def markCells() {
       var newlyMarked = false
       cells.foreach { cell =>
         if (!cell.marked && cell.possibleMoves.length == 1) {
@@ -160,7 +159,31 @@ class Grid(val width: Int, val height: Int,val wrapping: Boolean) { grid =>
           newlyMarked = true
         }
       }
-      if (newlyMarked) markCells
+      if (newlyMarked) markCells()
+  }
+
+  def numberOfSolutions: Int = {
+    val unmarkedCell = cells.find(c => !c.marked)
+
+    unmarkedCell match {
+      case None => 1
+      case Some(cell) => {
+        var solutions = 0
+        cell.possibleMoves.foreach { move =>
+          val originalDirections = cell.directions
+          cell.directions = cell.directions.movedDirections(move)
+          assert(!cell.marked)
+          cell.marked = true
+          //Thread.sleep(500)
+          //println()
+          //println(this)
+          solutions += numberOfSolutions
+          cell.marked = false
+          cell.directions = originalDirections
+        }
+        solutions
+      }
+    }
   }
 
   override def toString =

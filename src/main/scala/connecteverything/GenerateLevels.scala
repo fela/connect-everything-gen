@@ -5,8 +5,9 @@ package connecteverything
  */
 object GenerateLevels {
   def main(args: Array[String]) {
-    val grid = new Grid(11, 11, true)
+    val grid = new Grid(13, 13, true)
+    //println(grid.hasEasySolution)
     println(grid)
-    println(grid.hasEasySolution)
+    println(grid.numberOfSolutions)
   }
 }
