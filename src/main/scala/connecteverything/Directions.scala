@@ -1,3 +1,5 @@
+package connecteverything
+
 object Directions {
   val StringRepresentations = collection.immutable.HashMap(
     Directions(false, false, false, false) -> " ",

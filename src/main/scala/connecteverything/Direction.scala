@@ -1,3 +1,5 @@
+package connecteverything
+
 import scala.util.Random.nextInt
 
 object Direction {
